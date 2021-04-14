@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import './App.css';
 
-let random = Math.floor(Math.random() * (2 - 0) + 1);
+let random;
 
 function App() {
   const [number, setNumber] = useState("");
   const [binary, setBinary] = useState(["0", "0", "0", "0", "0", "0", "0", "0"])
   const [input, setInput] = useState("");
-  const [acertos, setAcertos] = useState(-1);
-  const [mode, setMode] = useState(0);
+  const [acertos, setAcertos] = useState(0);
+  const [mode, setMode] = useState(1);
 
   const generateNumber = () => {
     if ((mode === 1) || (mode === 0 && random === 1)) {
@@ -24,7 +24,6 @@ function App() {
       let array = [];
       let temp = number;
       let x = 8 - number.length;
-      console.log(temp, number);
 
       for (let i = 0; i < x; i++) {
         array.push("0");
@@ -43,12 +42,13 @@ function App() {
   const checkValue = () => {
     if ((mode === 1 && parseInt(input).toString(2) === number)
       || (mode === 0 && random === 1 && parseInt(input).toString(2) === number)) {
+      console.log(parseInt(input).toString(2), number);
       random = Math.floor(Math.random() * (2 - 0) + 1);
       setInput("");
       setNumber("");
       generateNumber();
       setAcertos(acertos + 1);
-    } else {
+    } else if ((mode === 2) || (mode === 0 && random !== 1)) {
       if (input === number.toString(2)) {
         random = Math.floor(Math.random() * (2 - 0) + 1);
         setInput("");
