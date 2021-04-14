@@ -5,35 +5,52 @@ function App() {
   const [number, setNumber] = useState("");
   const [binary, setBinary] = useState(["0", "0", "0", "0", "0", "0", "0", "0"])
   const [input, setInput] = useState("");
+  const [acertos, setAcertos] = useState(0);
+  const [mode, setMode] = useState(1);
 
-  const generateBinary = () => {
-    setNumber((Math.floor(Math.random() * (255 - 0) + 0).toString(2)));
-    setBinary([]);
+  const generateNumber = () => {
+    if ((mode === 1)) {
+      setNumber((Math.floor(Math.random() * (255 - 0) + 0)).toString(2));
+    } else {
+      setNumber(Math.floor(Math.random() * (255 - 0) + 0));
+    }
   }
 
   const populate = () => {
-    let array = [];
-    let temp = number;
-    let x = 8 - number.length;
+    setBinary([]);
+    if (mode === 1) {
+      let array = [];
+      let temp = number;
+      let x = 8 - number.length;
+      console.log(temp, number);
 
-    for (let i = 0; i < x; i++) {
-      array.push("0");
-    }
+      for (let i = 0; i < x; i++) {
+        array.push("0");
+      }
 
-    while (temp.length > 1) {
+      while (temp.length > 1) {
+        array.push(temp.slice(0, 1));
+        temp = temp.slice(1);
+      }
       array.push(temp.slice(0, 1));
-      temp = temp.slice(1);
-    }
-    array.push(temp.slice(0, 1));
 
-    setBinary(array);
+      setBinary(array);
+    }
   }
 
   const checkValue = () => {
-    if (parseInt(input).toString(2) === number) {
+    if (mode === 1 && parseInt(input).toString(2) === number) {
       setInput("");
       setNumber("");
-      generateBinary();
+      generateNumber();
+      setAcertos(acertos + 1);
+    } else if (mode === 2) {
+      if (input === number.toString(2)) {
+        setInput("");
+        setNumber("");
+        generateNumber();
+        setAcertos(acertos + 1);
+      }
     }
   }
 
@@ -41,18 +58,28 @@ function App() {
     setInput(event.target.value);
   }
 
-  useEffect(() => { generateBinary() }, []);
+  const changeMode = () => {
+    if (mode < 2) {
+      setMode(mode + 1);
+    } else {
+      setMode(1);
+    }
+  }
+
+  useEffect(() => { generateNumber() }, [mode]);
   useEffect(() => { checkValue() }, [input]);
   useEffect(() => { populate() }, [number]);
 
   return (
     <div className="App">
-
+      <p>
+        Acertos: {acertos}
+      </p>
       <table className="table">
         <tbody>
-          {/* <tr>
-            <th colSpan="8">{ }</th>
-          </tr> */}
+          <tr>
+            <th colSpan="8">{(mode === 2) && (number)}</th>
+          </tr>
           <tr>
             <td>128</td>
             <td>64</td>
@@ -80,6 +107,11 @@ function App() {
           </tr>
         </tbody>
       </table>
+      <p>
+        <button onClick={() => changeMode()}>{(mode === 1 && (<>BINÁRIO</>))
+          || (mode === 2 && (<>DECIMAL</>))
+          || (mode === 0 && (<>AMBOS</>))}</button>
+      </p>
     </div>
   );
 }
